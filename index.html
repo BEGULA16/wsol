@@ -1,0 +1,949 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingEdu - Master Trading Education</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Disclaimer Popup */
+        .disclaimer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
+
+        .disclaimer-content {
+            background: linear-gradient(135deg, #111111, #222222);
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            margin: 2rem;
+            border: 1px solid #333;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: popupFadeIn 0.5s ease;
+        }
+
+        .disclaimer-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ff6b6b;
+        }
+
+        .disclaimer-content p {
+            margin-bottom: 1.5rem;
+            color: #cccccc;
+            line-height: 1.8;
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-menu a:hover {
+            color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #ffffff;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            padding: 120px 2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Home Section */
+        #home {
+            background: linear-gradient(135deg, #000000 0%, #111111 100%);
+            position: relative;
+        }
+
+        .home-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-text p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #cccccc;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease 0.6s both;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.3);
+        }
+
+        .hero-image {
+            text-align: center;
+            animation: fadeInRight 1s ease;
+        }
+
+        .candlestick-chart {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            background: linear-gradient(135deg, #111111, #222222);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid #333;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            gap: 10px;
+        }
+
+        .candlestick {
+            width: 20px;
+            background: linear-gradient(180deg, #4ecdc4, #ff6b6b);
+            border-radius: 3px;
+            animation: candlestickGrow 2s ease infinite alternate;
+        }
+
+        .candlestick:nth-child(1) { height: 60%; animation-delay: 0s; }
+        .candlestick:nth-child(2) { height: 80%; animation-delay: 0.2s; }
+        .candlestick:nth-child(3) { height: 40%; animation-delay: 0.4s; }
+        .candlestick:nth-child(4) { height: 90%; animation-delay: 0.6s; }
+        .candlestick:nth-child(5) { height: 70%; animation-delay: 0.8s; }
+        .candlestick:nth-child(6) { height: 50%; animation-delay: 1s; }
+        .candlestick:nth-child(7) { height: 85%; animation-delay: 1.2s; }
+        .candlestick:nth-child(8) { height: 65%; animation-delay: 1.4s; }
+
+        /* Performance Section */
+        #performance {
+            background: #0a0a0a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #111111, #222222);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(78, 205, 196, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            margin-top: 0.5rem;
+        }
+
+        /* Slider Sections */
+        .slider-section {
+            background: #050505;
+        }
+
+        .slider-container {
+            overflow: hidden;
+            border-radius: 20px;
+            margin-top: 2rem;
+        }
+
+        .slider {
+            display: flex;
+            animation: infiniteSlide 20s linear infinite;
+        }
+
+        .slide {
+            min-width: 300px;
+            height: 200px;
+            margin: 0 1rem;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #111111, #333333);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4ecdc4;
+            font-size: 1.2rem;
+            border: 1px solid #444;
+            transition: transform 0.3s ease;
+        }
+
+        .slide:hover {
+            transform: scale(1.05);
+        }
+
+        .video-slide {
+            background: linear-gradient(135deg, #222222, #444444);
+        }
+
+        /* Contact Section */
+        #contact {
+            background: #0a0a0a;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 2rem auto 0;
+            background: linear-gradient(135deg, #111111, #222222);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid #333;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: #000000;
+            border: 2px solid #333;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: #ffffff;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.3);
+        }
+
+        /* About Section */
+        #about {
+            background: #050505;
+        }
+
+        .about-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            color: #cccccc;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes popupFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes candlestickGrow {
+            from {
+                transform: scaleY(0.8);
+            }
+            to {
+                transform: scaleY(1.2);
+            }
+        }
+
+        @keyframes infiniteSlide {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                margin: 10px;
+                padding: 1rem;
+            }
+
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                flex-direction: column;
+                background: rgba(17, 17, 17, 0.98);
+                width: calc(100% - 40px);
+                margin: 0 20px;
+                border-radius: 15px;
+                transition: 0.3s;
+                padding: 2rem 0;
+                gap: 1rem;
+                border: 1px solid #333;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .home-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            section {
+                padding: 100px 1rem 1rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4ecdc4;
+        }
+        
+        element {
+            -webkit-tap-highlight-color: transparent; /* remove tap highlight */
+         }
+         
+        element:focus {
+            outline: none; /* remove outline */
+            box-shadow: none; /* remove box shadow */
+         }
+         
+         ::-moz-selection { /* Code for Firefox */
+            color: #000;
+            background: #fff;
+         }
+         
+         ::selection {
+            color: #000;
+            background: #fff;
+         }
+    </style>
+</head>
+<body>
+    <!-- Disclaimer Popup -->
+    <div class="disclaimer-overlay" id="disclaimerOverlay">
+        <div class="disclaimer-content">
+            <h2>DISCLAIMER!</h2>
+            <p>Binary Trading and Forex Trading involves substantial risk and is not suitable for all investors. Past performance does not guarantee future results. You should carefully consider your investment objectives, level of experience, and risk appetite before making any investment decisions.</p>
+            <p>The information provided on this website is for educational purposes only and should not be considered as financial advice.</p>
+            <div class="countdown" id="countdown">10</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo">WinterSolana</a>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#performance">Performance</a></li>
+                <li><a href="#images">Images</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#about">Affiliate Link</a></li>
+                <li><a href="#about">Telegram</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home">
+        <div class="container">
+            <div class="home-content">
+                <div class="hero-text">
+                    <h1>WinterSolana Trading</h1> <h5> this business is still an idea and under development by Damian Kehnan </h5>
+                    <p>Copy our trade and signal over 3 platforms with Binary and Forex!</p>
+                    <a href="#performance" class="cta-button">Get Started</a>
+                </div>
+                <div class="hero-image">
+                    <div class="candlestick-chart">
+                        <div class="candlestick"></div>
+                        <div class="candlestick"></div>
+                        <div class="candlestick"></div>
+                        <div class="candlestick"></div>
+                        <div class="candlestick"></div>
+                        <div class="candlestick"></div>
+                        <div class="candlestick"></div>
+                        <div class="candlestick"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Section -->
+    <section id="performance">
+        <div class="container">
+            <h2 class="section-title">Our Performance</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Copy Cats</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$13.37</div>
+                    <div class="stat-label">Profit Pulled</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">null</div>
+                    <div class="stat-label">Market Analysis</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Trading Strategies</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Slider Section -->
+    <section id="images" class="slider-section">
+        <div class="container">
+            <h2 class="section-title">Trading Charts & Analysis</h2>
+            <div class="slider-container">
+                <div class="slider" id="imageSlider">
+                    <div class="slide">📈 Bullish Pattern</div>
+                    <div class="slide">📉 Bearish Trend</div>
+                    <div class="slide">🔄 Consolidation</div>
+                    <div class="slide">⚡ Breakout Alert</div>
+                    <div class="slide">📊 Volume Analysis</div>
+                    <div class="slide">🎯 Support Level</div>
+                    <div class="slide">🔴 Resistance Zone</div>
+                    <div class="slide">💹 Market Overview</div>
+                    <div class="slide">📱 Mobile Trading</div>
+                    <div class="slide">🌟 Premium Signals</div>
+                    <!-- Duplicate for infinite scroll -->
+                    <div class="slide">📈 Bullish Pattern</div>
+                    <div class="slide">📉 Bearish Trend</div>
+                    <div class="slide">🔄 Consolidation</div>
+                    <div class="slide">⚡ Breakout Alert</div>
+                    <div class="slide">📊 Volume Analysis</div>
+                    <div class="slide">🎯 Support Level</div>
+                    <div class="slide">🔴 Resistance Zone</div>
+                    <div class="slide">💹 Market Overview</div>
+                    <div class="slide">📱 Mobile Trading</div>
+                    <div class="slide">🌟 Premium Signals</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">Sign Up with our affiliate link and start working with us!</h2>
+            <div class="about-content">
+            <a href="#" class="cta-button">this project is under development</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Initialize EmailJS
+        emailjs.init('CsYC4wQCuJdc4YrUA');
+
+        // Disclaimer countdown and removal
+        let countdownTime = 10;
+        const countdownElement = document.getElementById('countdown');
+        const disclaimerOverlay = document.getElementById('disclaimerOverlay');
+
+        const countdownInterval = setInterval(() => {
+            countdownTime--;
+            countdownElement.textContent = `${countdownTime}`;
+            
+            if (countdownTime <= 0) {
+                disclaimerOverlay.style.opacity = '0';
+                disclaimerOverlay.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    disclaimerOverlay.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }, 500);
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+
+        // Mobile Navigation
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(17, 17, 17, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(17, 17, 17, 0.95)';
+            }
+        });
+
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            
+            const templateParams = {
+                from_name: document.getElementById('name').value,
+                from_email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value,
+                to_name: 'TradingEdu Team'
+            };
+            
+            emailjs.send('service_0wejp0f', 'template_mkw48na', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    document.getElementById("submit-btn").innerText = "Submitted!";
+                    document.getElementById('contactForm').reset();
+                })
+                .catch(function(error) {
+                    console.log('FAILED...', error);
+                    document.getElementById("submit-btn").innerText = "Failed!";
+                })
+                .finally(function() {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Message';
+                });
+        });
+
+        // Slider pause on hover
+        const sliders = document.querySelectorAll('.slider');
+        sliders.forEach(slider => {
+            slider.addEventListener('mouseenter', () => {
+                slider.style.animationPlayState = 'paused';
+            });
+            
+            slider.addEventListener('mouseleave', () => {
+                slider.style.animationPlayState = 'running';
+            });
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections for animations
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(section);
+        });
+
+        // Set home section to visible immediately
+        document.getElementById('home').style.opacity = '1';
+        document.getElementById('home').style.transform = 'translateY(0)';
+
+        // Animate stat numbers on scroll
+        const statNumbers = document.querySelectorAll('.stat-number');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const finalValue = target.textContent;
+                    
+                    // Simple animation for numbers
+                    target.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        target.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statNumbers.forEach(stat => {
+            statsObserver.observe(stat);
+        });
+    </script>
+</body>
+</html>to send message. Please try again or contact us directly.');
+                })
+                .finally(function() {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Message';
+                });
+        });
+
+        // Slider pause on hover
+        const sliders = document.querySelectorAll('.slider');
+        sliders.forEach(slider => {
+            slider.addEventListener('mouseenter', () => {
+                slider.style.animationPlayState = 'paused';
+            });
+            
+            slider.addEventListener('mouseleave', () => {
+                slider.style.animationPlayState = 'running';
+            });
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections for animations
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(section);
+        });
+
+        // Set home section to visible immediately
+        document.getElementById('home').style.opacity = '1';
+        document.getElementById('home').style.transform = 'translateY(0)';
+
+        // Animate stat numbers on scroll
+        const statNumbers = document.querySelectorAll('.stat-number');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const finalValue = target.textContent;
+                    
+                    // Simple animation for numbers
+                    target.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        target.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statNumbers.forEach(stat => {
+            statsObserver.observe(stat);
+        });
+    </script>
+</body>
+</html>
